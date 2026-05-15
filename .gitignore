@@ -1,0 +1,20 @@
+node_modules
+    .env
+    ```
+4.  **Initialize Git and Push:** Create a new repository on GitHub, then run:
+    
+```bash
+    git init
+    git add .
+    git commit -m "Initial commit: Project structure and dependencies"
+    git remote add origin <your-github-repo-url>
+    git push -u origin main
+    ```
+
+---
+
+## Step 2: Create the "Clean" Folder Structure
+Run these commands (or create folders manually) to show you understand **Scalable Architecture**:
+```bash
+mkdir config controllers models routes middleware utils
+touch server.js .env
