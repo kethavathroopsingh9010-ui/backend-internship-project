@@ -1,5 +1,5 @@
 node_modules
-    .env
+.env
     ```
 4.  **Initialize Git and Push:** Create a new repository on GitHub, then run:
     
