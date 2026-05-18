@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
+const jobRoutes = require('./routes/jobRoutes'); 
 
 // Loading environment variables
 dotenv.config();
@@ -20,6 +21,7 @@ app.use(express.json()); // Essential for parsing incoming req.body JSON
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/jobs', jobRoutes); 
 
 // Base Test Route
 app.get('/', (req, res) => {
