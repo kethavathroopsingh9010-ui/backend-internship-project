@@ -4,7 +4,7 @@ const JobSchema = new mongoose.Schema(
   {
     recruiter: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User', // Links the job post to the User who created it
+      ref: 'User', 
       required: true,
     },
     title: {
@@ -22,7 +22,7 @@ const JobSchema = new mongoose.Schema(
       required: [true, 'Please add a job description'],
     },
     requirements: {
-      type: [String], // Array of strings for skills/qualifications
+      type: [String], 
       required: [true, 'Please add job requirements'],
     },
     salary: {
@@ -36,8 +36,13 @@ const JobSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // Automatically creates createdAt and updatedAt fields
+    timestamps: true, 
   }
 );
+
+//(Before exporting, using correct capitalized Casing)
+JobSchema.index({ title: 'text', company: 'text' }); 
+JobSchema.index({ recruiter: 1 }); 
+
 
 module.exports = mongoose.model('Job', JobSchema);

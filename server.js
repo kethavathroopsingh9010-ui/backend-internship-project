@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const jobRoutes = require('./routes/jobRoutes'); 
+const { notFound, errorHandler } = require('./middleware/errorMiddleware'); 
 
 // Loading environment variables
 dotenv.config();
@@ -27,6 +28,10 @@ app.use('/api/jobs', jobRoutes);
 app.get('/', (req, res) => {
   res.send('API is running successfully...');
 });
+
+// Error Handling Middlewares (Must be at the very bottom, after all routes)
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
