@@ -3,20 +3,32 @@ const Application = require('../models/Application');
 const Job = require('../models/Job');
 
 // @desc    Apply for a job
-// @route   POST /api/applications/apply/:jobId
+// @route   POST /api/applications/:jobId
 // @access  Private
 exports.applyToJob = asyncHandler(async (req, res) => {
-  const { resume, coverLetter } = req.body;
+  const { resumeLink, coverLetter } = req.body; 
   const jobId = req.params.jobId;
 
-  // 1. Check if the job exists
+  // REQUIREMENT GAURD: Recruiters should NOT be allowed to apply
+  if (req.user.role === 'recruiter') {
+    res.status(403);
+    throw new Error('Access denied. Recruiters are not allowed to apply for jobs.');
+  }
+
+  // REQUIREMENT GUARD: Validation for empty fields
+  if (!resumeLink || !coverLetter) {
+    res.status(400);
+    throw new Error('Please fill in all required fields (resumeLink, coverLetter)');
+  }
+
+  // REQUIREMENT GUARD: Validate job existence before applying
   const job = await Job.findById(jobId);
   if (!job) {
     res.status(404);
     throw new Error('Job not found');
   }
 
-  // 2. Check if this candidate has already applied to this specific job
+  // REQUIREMENT GUARD: Prevent duplicate applications
   const alreadyApplied = await Application.findOne({
     job: jobId,
     applicant: req.user._id,
@@ -27,11 +39,10 @@ exports.applyToJob = asyncHandler(async (req, res) => {
     throw new Error('You have already applied for this job');
   }
 
-  // 3. Create the application record
   const application = await Application.create({
     job: jobId,
     applicant: req.user._id,
-    resume,
+    resumeLink, 
     coverLetter,
   });
 
@@ -47,22 +58,19 @@ exports.applyToJob = asyncHandler(async (req, res) => {
 exports.getJobApplications = asyncHandler(async (req, res) => {
   const jobId = req.params.jobId;
 
-  // 1. Find the job to verify ownership
   const job = await Job.findById(jobId);
   if (!job) {
     res.status(404);
     throw new Error('Job not found');
   }
 
-  // 2. Ensure the logged-in user is the recruiter who actually posted the job
   if (job.recruiter.toString() !== req.user._id.toString()) {
     res.status(403);
     throw new Error('Not authorized to view applications for this job');
   }
 
-  // 3. Fetch applications and populate applicant details
   const applications = await Application.find({ job: jobId })
-    .populate('applicant', 'name email')
+    .populate('applicant', 'name email') 
     .sort('-createdAt');
 
   res.status(200).json(applications);

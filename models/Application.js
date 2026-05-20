@@ -7,32 +7,31 @@ const ApplicationSchema = new mongoose.Schema(
       ref: 'Job',
       required: true,
     },
-    applicant: {
+    applicant: { // This links candidate (ObjectId -> User)
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-    resume: {
+    resumeLink: { 
       type: String,
-      required: [true, 'Please provide a resume link or text'],
+      required: [true, 'Please provide a resume link'],
     },
     coverLetter: {
       type: String,
+      required: [true, 'Please provide a cover letter'],
     },
-    status: {
+    applicationStatus: { 
       type: String,
-      enum: ['Pending', 'Reviewed', 'Accepted', 'Rejected'],
-      default: 'Pending',
+      enum: ['pending', 'Reviewed', 'Accepted', 'Rejected'], 
+      default: 'pending',
     },
   },
   {
-    timestamps: true,
+    timestamps: true, // Covers createdAt timestamps requirement
   }
 );
 
-// Optimize performance: Speed up lookups for a specific job's applications
 ApplicationSchema.index({ job: 1 });
-// Optimize performance: Speed up lookups for a candidate's application history
 ApplicationSchema.index({ applicant: 1 });
 
 module.exports = mongoose.model('Application', ApplicationSchema);

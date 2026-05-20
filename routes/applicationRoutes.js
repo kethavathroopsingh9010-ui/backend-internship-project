@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { applyToJob, getJobApplications } = require('../controllers/applicationController');
-const { protect } = require('../middleware/authMiddleware'); // Reusing your JWT guard
+const { protect } = require('../middleware/authMiddleware');
 
-// Both routes require a valid login token
-router.post('/apply/:jobId', protect, applyToJob);
-router.get('/job/:jobId', protect, getJobApplications);
+// Paths streamlined to exactly match specification requirements
+router.post('/:jobId', protect, applyToJob); // Hits: POST /api/applications/:jobId
+router.get('/job/:jobId', protect, getJobApplications); // Hits: GET /api/applications/job/:jobId
 
 module.exports = router;
