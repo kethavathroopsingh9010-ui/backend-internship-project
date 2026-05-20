@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const jobRoutes = require('./routes/jobRoutes'); 
 const { notFound, errorHandler } = require('./middleware/errorMiddleware'); 
+const applicationRoutes = require('./routes/applicationRoutes'); 
 
 // Loading environment variables
 dotenv.config();
@@ -23,6 +24,7 @@ app.use(express.json()); // Essential for parsing incoming req.body JSON
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes); 
+app.use('/api/applications', applicationRoutes); 
 
 // Base Test Route
 app.get('/', (req, res) => {
