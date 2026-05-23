@@ -1,0 +1,23 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "HireMe API Documentation",
+    "version": "1.0.0",
+    "description": "Production-grade backend for HireMe application."
+  },
+  "paths": {
+    "/api/auth/register": {
+      "post": { "summary": "Register a new user profile" }
+    },
+    "/api/auth/login": {
+      "post": { "summary": "Login user and return authentication token" }
+    },
+    "/api/jobs": {
+      "get": { "summary": "Fetch all available jobs" },
+      "post": { "summary": "Create a new job posting" }
+    },
+    "/api/applications": {
+      "post": { "summary": "Submit a job application" }
+    }
+  }
+}
