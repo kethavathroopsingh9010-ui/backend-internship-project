@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Application = require('../models/Application');
 const Job = require('../models/Job');
+const User = require('../models/User');
 
 // @desc    Apply for a job
 // @route   POST /api/applications/:jobId
@@ -75,3 +76,40 @@ exports.getJobApplications = asyncHandler(async (req, res) => {
 
   res.status(200).json(applications);
 });
+
+// ─── APPEND THIS TO YOUR EXISTING applicationController.js ───────────────────
+const JobApplication = require('../models/jobApplicationModel');
+
+
+// @desc    Apply for a specific gig or internship opening
+// @route   POST /api/applications/apply/:jobId
+exports.applyToJob = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { workerId } = req.body; // Passed directly from phone session storage
+
+    // Find the targeted job to extract who the owning client is
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: 'Job listing not found.' });
+    }
+
+    // Guard Clause: Prevent multiple application spamming from the same user account
+    const alreadyApplied = await JobApplication.findOne({ job: jobId, worker: workerId });
+    if (alreadyApplied) {
+      return res.status(400).json({ message: 'You have already submitted an application to this slot!' });
+    }
+
+    // Create the clean tracking document entry row
+    const application = await JobApplication.create({
+      job: jobId,
+      client: job.client || job.clientId,
+      worker: workerId,
+      status: 'pending'
+    });
+
+    res.status(201).json({ success: true, data: application });
+  } catch (error) {
+    res.status(500).json({ message: 'Server failure parsing job request tracking systems', error: error.message });
+  }
+};
